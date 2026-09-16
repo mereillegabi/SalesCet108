@@ -24,6 +24,7 @@ namespace SalesCet108.Web
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IImageHelper, ImageHelper>();
             builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
+            builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 
 
             var app = builder.Build();

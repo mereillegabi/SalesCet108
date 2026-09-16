@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SalesCet108.Web.Data;
+using SalesCet108.Web.Helpers;
 
 namespace SalesCet108.Web
 {
@@ -12,13 +13,22 @@ namespace SalesCet108.Web
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddDbContext<DataContext>( o =>
+            builder.Services.AddDbContext<DataContext>(o =>
             {
                 o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             }
                 );
 
+
+            builder.Services.AddTransient<SeedDb>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<IImageHelper, ImageHelper>();
+            builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
+
+
             var app = builder.Build();
+            RunSeeding(app);
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -40,6 +50,18 @@ namespace SalesCet108.Web
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+        }
+
+        private static void RunSeeding(WebApplication app)
+        {
+            var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<SeedDb>();
+
+                seeder.SeedAsync().Wait();
+            }
         }
     }
 }

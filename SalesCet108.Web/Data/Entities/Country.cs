@@ -10,5 +10,9 @@ namespace SalesCet108.Web.Data.Entities
         [MaxLength(50, ErrorMessage = "o campo {0} deve ter no máximo {1} caracteres.")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public string Name { get; set; } = null!;
+        public ICollection<State> States { get; set; } = null!;
+
+        [Display(Name = "Número de Províncias")]
+        public int StatesNumber => States == null ? 0 : States.Count;
     }
 }
